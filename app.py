@@ -3,8 +3,6 @@ from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
 
-from fastapi import FastAPI
-
 # Instancia de una aplicacion
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/ConcesionarioT2C"
