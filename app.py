@@ -1,7 +1,8 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_pymongo import PyMongo
 from bson import json_util
 from bson.objectid import ObjectId
+
 from fastapi import FastAPI
 
 # Instancia de una aplicacion
@@ -9,44 +10,51 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/ConcesionarioT2C"
 mongo = PyMongo(app)
 
+### Peticiones requeridas ###
 
 # Ver lista de coches
 @app.route('/coches', methods=['GET'])
 def get_cars():
-    cars = mongo.db.coches.find()  # Formato bson
-    response = json_util.dumps(cars)  # Formatear a json (string)
-    return Response(response, mimetype='application/json')  # Se pone en json tabulado
+    cars = mongo.db.coches
+    output = []
+    for c in cars.find():
+        output.append({'marca': c['marca'],
+                       'coste': c['coste'],
+                       'fecha_de_ingreso': c['fecha_de_ingreso'],
+                       'vendido': c['vendido'],
+                       'matricula': c['matricula'],
+                       'precio_de_venta': c['precio_de_venta']})
+    return jsonify({'result': output})
 
 
 # Ver info de un coche
-@app.route('/coches/<id>', methods=['GET'])
-def get_car(id):
-    coche = mongo.db.coches.find_one({'_id': ObjectId(id)})  # Formato bson
-    response = json_util.dumps(coche)  # Formato json (string)
-    return Response(response, mimetype='application/json')  # Se pone en json tabulado
-
-
-# Ver lista concesionarios
-@app.route('/concesionarios', methods=['GET'])
-def get_concesionaries():
-    concesionarios = mongo.db.concesionarios.find()
-    response = json_util.dumps(concesionarios)
-    return Response(response, mimetype='application/json')
-
-
-# Ver info de un concesionario
-@app.route('/concesionarios/<id>', methods=['GET'])
-def get_concesionary(id):
-    concesionario = mongo.db.concesionarios.find_one({'_id': ObjectId(id)})
-    response = json_util.dumps(concesionario)
-    return Response(response, mimetype='application/json')
-
+@app.route('/coches/<matricula>', methods=['GET'])
+def get_car(matricula):
+    coche = mongo.db.coches
+    c = coche.find_one({'matricula': matricula})
+    if c:
+        concesionario = mongo.db.concesionarios
+        cc = concesionario.find_one({'_id': ObjectId(c['concesionario'])})
+        output = {'marca': c['marca'],
+                  'coste': c['coste'],
+                  'fecha_de_ingreso': c['fecha_de_ingreso'],
+                  'vendido': c['vendido'],
+                  'matricula': c['matricula'],
+                  'precio_de_venta': c['precio_de_venta'],
+                  'concesionario': cc['direccion']}
+    else:
+        output = "Coche no encontrado"
+    return jsonify({'result': output})
 
 # Dar de baja aun coche
 @app.route('/coches/<id>', methods=['DELETE'])
 def delete_car(id):
-    mongo.db.coches.delete_one({'_id': ObjectId(id)})
-    response = 'Se ha dado de baja el coche seleccionado'
+    coche = mongo.db.coches.find_one({'_id': ObjectId(id)})
+    if coche['vendido'] == True:
+        response = 'No se puede dar de baja un coche vendido'
+    else:
+        mongo.db.coches.delete_one({'_id': ObjectId(id)})
+        response = 'Se ha dado de baja el coche seleccionado'
     return response
 
 
@@ -65,6 +73,32 @@ def sold_car(id):
 
     else:
         return ('Este coche ya ha sido vendido')
+
+
+### Peticiones extra
+
+# Coches en db
+@app.route('/cochesbd', methods=['GET'])
+def get_coches_db():
+    coches = mongo.db.concesionarios.find()
+    response = json_util.dumps(coches)
+    return Response(response, mimetype='application/json')
+
+
+# Concesionarios en db
+@app.route('/concesionarios', methods=['GET'])
+def get_concesionaries():
+    concesionarios = mongo.db.concesionarios.find()
+    response = json_util.dumps(concesionarios)
+    return Response(response, mimetype='application/json')
+
+
+# Ver info de un concesionario
+@app.route('/concesionarios/<id>', methods=['GET'])
+def get_concesionary(id):
+    concesionario = mongo.db.concesionarios.find_one({'_id': ObjectId(id)})
+    response = json_util.dumps(concesionario)
+    return Response(response, mimetype='application/json')
 
 
 # Anadir un coche
@@ -90,7 +124,7 @@ def add_car():
              'concesionario': concesionario}
         )
         response = 'Coche añadido correctamente'
-        return Response(response, mimetype='application/json')
+        return response
 
     else:
         return 'Error'
