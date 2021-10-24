@@ -1,9 +1,30 @@
-<html lang="es">
-<head>
-  <title>Prueba técnica de BackEnd</title>
-</head>
+Prueba técnica de BackEnd
 
-<body>
-  <p>1. Tutorial para arrancar el proyecto.</p>
-</body>
-</html>
+· Tutorial para arrancar el proyecto.
+  1. Instala y abre un entorno para Python (PyCharm, Visual Studio Code, ...)
+  2. Abre el terminal
+  3. Ejecuta el comando: ./venv/Scripts/activate
+     Esto iniciará el entorno virtual.
+  4. Ejecuta el comando: pip install requirements.txt
+     Esto intalará todos los paquetes necesarios.
+  5. Ejecuta el comando: uvicorn app:app --reload
+     Esto ejecutará el proyeto.
+  6. Accede a tu navegador y escribe la siguiente URL: http://localhost:8000/docs#
+  
+  Una vez llegados a este punto, podrá realizar las peticiones que desee. Para realizarlas, seleccione la petición y pulse en "Try it out". Dependiendo de la petición, puede que aparezcan campos para rellenar. En ese caso, rellenelos. Para ejecutarlo, pulse el botón azul "Execute".
+
+· Peticiones disponibles.
+  1. Obtener una lista de todos los coches de la base de datos.
+  2. Añadir un coche.
+     Para añadir un coche, necesitarás saber el ID del concesionario al que pertenece. Para ello, es recomendable hacer la peticion número 6 para listar los concesionarios, y así poder copiar el ID correspondiente.
+  3. Ver información de un coche.
+     Para ello, deberá introducir el id del coche en cuestión. Para ello, es recomendable ejecutar la petición número 1 para listar los coches, y así poder copiar el ID.
+  4. Dar de baja un coche.
+     Para dar de baja un coche, no se podrá hacer si el coche ha sido vendido.
+  5. Actualizar coche al ser vendido.
+     Cuando un coche sea vendido, con esta petición podrá indicar el precio de venta del coche. Si el coche ya ha sido modificado, no podrá modificarlo.
+  6. Obtener una lista de todos los concesionarios.
+  7. Añadir un concesionario.
+  8. Ver información de un concesionario.
+     Necesitará el ID del concesionario en cuestión. Para ello, es recomendable ejecutar la peticion número 6 para acceder a la lista de todos los concesionarios, y así poder copiar el ID.
+  9. Eliminar un concesionario.
