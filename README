@@ -2,6 +2,7 @@ Prueba técnica de BackEnd
 
 · Tutorial para arrancar el proyecto.
   1. Instala y abre un entorno para Python (PyCharm, Visual Studio Code, ...)
+  2. Descargue el repositorio de Git-Hub y ábralo en su entorno.
   2. Abre el terminal
   3. Ejecuta el comando: ./venv/Scripts/activate
      Esto iniciará el entorno virtual.
